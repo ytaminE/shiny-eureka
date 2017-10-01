@@ -1,0 +1,12 @@
+{% extends "base_logined.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="container">
+  <h1>Welcome to your home page</h1>
+  <form action="/upload"  enctype="multipart/form-data" method="post">
+    <input type="file" name="uploadedfile"><br />
+    <input type="submit" value="Send">
+    <input type="reset">
+  </form>
+</div>
+{% endblock %}
