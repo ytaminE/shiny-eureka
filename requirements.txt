@@ -12,4 +12,5 @@ mysql-connector-python-rf==2.2.2
 pycparser==2.18
 six==1.11.0
 SQLAlchemy==1.1.14
+Wand==0.4.4
 Werkzeug==0.12.2
