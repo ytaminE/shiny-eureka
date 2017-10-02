@@ -8,9 +8,8 @@ The Image Gallery</h1>
     <p>A bunch of beautiful images that I didn't take</p>
   </div>
   <form action="/upload"  enctype="multipart/form-data" method="post">
-    
     <div id="input-group">
-      <label id="upload-button" class="btn btn-default">
+      <label id="upload-button" class="btn btn-primary">
         Upload<input type="file" name="uploadedfile" style="display: none">      
       </label>
       <br>
@@ -19,21 +18,53 @@ The Image Gallery</h1>
     </div>
     
     <br>
-    <label class="btn btn-primary">
+    <label class="btn btn-success">
       Submit<input type="submit" style="display: none">      
     </label>
 
     <label class="btn btn-warning">
       Reset<input type="reset" style="display: none">      
     </label>
-    
+  </form>
+  <br>
+  <form action="/empty" method="post">
+    <label class="btn btn-danger">
+      DELETE ALL IMAGES<input type="submit" style="display: none">      
+    </label>
   </form>
   <br>
 
   {% for image in images %}
     <div class="col-lg-4 col-sm-6">
         <div class="thumbnail">
-            <img src="static/img/upload/{{user_id}}/{{image}}">
+            <!-- <img style="cursor:-webkit-zoom-in"  -->
+            <!-- src="static/img/upload/{{user_id}}/{{image}}"> -->
+            <!-- ********************************************************** -->
+            <!-- Trigger the Modal -->
+            <img style="cursor:-webkit-zoom-in" id="myImg" src="static/img/upload/{{user_id}}/{{image}}" alt="{{image}}" width="300" height="200">
+
+            <!-- The Modal -->
+            <div id="myModal" class="modal">
+
+              <!-- The Close Button -->
+              <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+
+              <!-- Modal Content (The Image) -->
+              <img class="modal-content" id="img01">
+              <!-- Modal Caption (Image Text) -->
+              <div id="caption"></div>
+
+              <img class="modal-content" src="static/img/upload/{{user_id}}/resize/{{image}}">
+              <div id="caption"></div>
+
+              <img class="modal-content" src="static/img/upload/{{user_id}}/enhancement/{{image}}">
+              <div id="caption"></div>
+
+              <img class="modal-content" src="static/img/upload/{{user_id}}/rotate/{{image}}">
+              <div id="caption"></div>
+              
+            </div>
+            <!-- ********************************************************** -->
         </div>
     </div>
   {% endfor %}

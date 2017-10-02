@@ -1,5 +1,6 @@
 import os
 import glob
+import shutil
 
 from flask import render_template, redirect, url_for, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
@@ -40,11 +41,21 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+@app.route('/empty', methods=['GET', 'POST'])
+@login_required
+def empty():
+    if current_user.is_authenticated and request.method == 'POST':
+        user_id = current_user.get_id()
+        upload_path = app.config['UPLOAD_FOLDER'] + '/' + user_id
+        shutil.rmtree(upload_path)
+    return redirect('home')
+
+
 @app.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload():
     if current_user.is_authenticated and request.method == 'POST':
-        username = current_user.get_id()
+        user_id = current_user.get_id()
 
         # check if the post request has the file part
         if 'uploadedfile' not in request.files:
@@ -61,25 +72,32 @@ def upload():
             # The filename returned is an ASCII only string for maximum portability.
             filename = secure_filename(file.filename)
 
-            save_path = app.config['UPLOAD_FOLDER'] + '/' + username + '/'
+            save_path = app.config['UPLOAD_FOLDER'] + '/' + user_id + '/'
+            resize_path = save_path + 'resize/'
+            rotate_path = save_path + 'rotate/'
+            enhance_path = save_path + 'enhancement/'
 
             if not os.path.exists(save_path):
                 os.makedirs(save_path)
+            if not os.path.exists(resize_path):
+                os.makedirs(resize_path)
+            if not os.path.exists(rotate_path):
+                os.makedirs(rotate_path)
+            if not os.path.exists(enhance_path):
+                os.makedirs(enhance_path)
 
             file.save(os.path.join(save_path, filename))
 
             with Image(filename=save_path + filename) as img:
                 with img.clone() as i:
-                    i.resize(int(i.width * 0.25), int(i.height * 0.25))
-                    i.save(filename=save_path + 'resize_' + filename)
+                    i.resize(int(i.width * 0.2), int(i.height * 0.2))
+                    i.save(filename=resize_path + filename)
                 with img.clone() as i:
                     i.rotate(90)
-                    i.save(filename=save_path + 'rotate_' + filename)
+                    i.save(filename=rotate_path + filename)
                 with img.clone() as i:
                     i.evaluate(operator='rightshift', value=1, channel='blue')
-                    i.save(filename=save_path + 'enhancement_' + filename)
-
-                    # i.save(filename=save_path + 'mona-lisa-{0}.png'.format(r))
+                    i.save(filename=enhance_path + filename)
 
             # return redirect(url_for('uploaded_file',filename=filename))
             return redirect(url_for('home'))
