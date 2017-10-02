@@ -1,13 +1,15 @@
 from flask import render_template, redirect, url_for, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
 from werkzeug.utils import secure_filename
+from wand.image import Image
 
 from . import app, db, login_manager
 from .models import User
 
 import os
 
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
 
 @app.route('/')
 @app.route('/welcome')
@@ -23,30 +25,55 @@ def welcome():
 def home():
     return render_template('home.html')
 
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/upload', methods=['GET','POST'])
+
+@app.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload():
-    if request.method == 'POST':
+    if current_user.is_authenticated and request.method == 'POST':
+        username = current_user.get_id()
+        save_path = app.config['UPLOAD_FOLDER'] + '/' + username + '/'
+
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+
         # check if the post request has the file part
         if 'uploadedfile' not in request.files:
             app.logger.info('NO FILE PART')
             flash('No file part')
             return redirect(request.url)
         file = request.files['uploadedfile']
-        # if user does not select file, browser also
-        # submit a empty part without filename
+        # if user does not select file, browser also submit a empty part without filename
         if file.filename == '':
             return redirect(request.url)
         if file and allowed_file(file.filename):
+            # Pass it a filename and it will return a secure version of it.
+            # This filename can then safely be stored on a regular file system and passed to os.path.join().
+            # The filename returned is an ASCII only string for maximum portability.
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            file.save(os.path.join(save_path, filename))
+
+            with Image(filename=save_path + filename) as img:
+                with img.clone() as i:
+                    i.resize(int(i.width * 0.25), int(i.height * 0.25))
+                    i.save(filename=save_path + 'resize_' + filename)
+                with img.clone() as i:
+                    i.rotate(90)
+                    i.save(filename=save_path + 'rotate_' + filename)
+                with img.clone() as i:
+                    i.evaluate(operator='rightshift', value=1, channel='blue')
+                    i.save(filename=save_path + 'enhancement_' + filename)
+
+                    # i.save(filename=save_path + 'mona-lisa-{0}.png'.format(r))
+
             # return redirect(url_for('uploaded_file',filename=filename))
             return redirect(url_for('home'))
 
     return render_template('home.html')
+
 
 # route for handling the login page logic
 @app.route('/login', methods=['GET', 'POST'])
