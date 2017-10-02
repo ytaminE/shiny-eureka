@@ -15,7 +15,7 @@ app.config.from_pyfile('development.py')
 # Variables defined here will override those in the default configuration
 app.config.from_envvar('APP_CONFIG_FILE')
 
-app.config['UPLOAD_FOLDER'] = 'app/uploads'
+app.config['UPLOAD_FOLDER'] = 'app/static/img/upload'
 
 db = SQLAlchemy(app)
 

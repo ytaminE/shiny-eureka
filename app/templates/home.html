@@ -2,11 +2,41 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 <div class="container">
-  <h1>Welcome to your home page</h1>
+  <div class="jumbotron">
+    <h1><i class="fa fa-camera-retro" aria-hidden="true"></i>
+The Image Gallery</h1>
+    <p>A bunch of beautiful images that I didn't take</p>
+  </div>
   <form action="/upload"  enctype="multipart/form-data" method="post">
-    <input type="file" name="uploadedfile"><br />
-    <input type="submit" value="Send">
-    <input type="reset">
+    
+    <div id="input-group">
+      <label id="upload-button" class="btn btn-default">
+        Upload<input type="file" name="uploadedfile" style="display: none">      
+      </label>
+      <br>
+      <br>
+      <input type="text" class="form-control" readonly="">
+    </div>
+    
+    <br>
+    <label class="btn btn-primary">
+      Submit<input type="submit" style="display: none">      
+    </label>
+
+    <label class="btn btn-warning">
+      Reset<input type="reset" style="display: none">      
+    </label>
+    
   </form>
+  <br>
+
+  {% for image in images %}
+    <div class="col-lg-4 col-sm-6">
+        <div class="thumbnail">
+            <img src="static/img/upload/{{user_id}}/{{image}}">
+        </div>
+    </div>
+  {% endfor %}
 </div>
+<script type="text/javascript" src="static/js/upload.js"></script>
 {% endblock %}

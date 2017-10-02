@@ -1,3 +1,6 @@
+import os
+import glob
+
 from flask import render_template, redirect, url_for, request, flash
 from flask_login import login_required, login_user, logout_user, current_user
 from werkzeug.utils import secure_filename
@@ -5,8 +8,6 @@ from wand.image import Image
 
 from . import app, db, login_manager
 from .models import User
-
-import os
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
@@ -23,7 +24,16 @@ def welcome():
 @app.route('/home')
 @login_required
 def home():
-    return render_template('home.html')
+    user_id = current_user.get_id()
+    img_path = app.config['UPLOAD_FOLDER'] + '/' + user_id + '/'
+
+    all_image_list = [glob.glob(img_path + '*.%s' % ext) for ext in ALLOWED_EXTENSIONS]
+
+    images = [item for image_list in all_image_list for item in image_list]
+
+    images = [os.path.basename(x) for x in images]
+
+    return render_template('home.html', images=images, user_id=user_id)
 
 
 def allowed_file(filename):
@@ -35,10 +45,6 @@ def allowed_file(filename):
 def upload():
     if current_user.is_authenticated and request.method == 'POST':
         username = current_user.get_id()
-        save_path = app.config['UPLOAD_FOLDER'] + '/' + username + '/'
-
-        if not os.path.exists(save_path):
-            os.makedirs(save_path)
 
         # check if the post request has the file part
         if 'uploadedfile' not in request.files:
@@ -54,6 +60,12 @@ def upload():
             # This filename can then safely be stored on a regular file system and passed to os.path.join().
             # The filename returned is an ASCII only string for maximum portability.
             filename = secure_filename(file.filename)
+
+            save_path = app.config['UPLOAD_FOLDER'] + '/' + username + '/'
+
+            if not os.path.exists(save_path):
+                os.makedirs(save_path)
+
             file.save(os.path.join(save_path, filename))
 
             with Image(filename=save_path + filename) as img:
