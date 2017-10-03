@@ -1,4 +1,4 @@
-# shiny-eureka
+# Shiny Eureka
 Cloud Computing Assignment 1
 
 A simple picture blog website
