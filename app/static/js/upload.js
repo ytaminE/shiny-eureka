@@ -12,30 +12,42 @@ $(document).ready( function() {
     });
 });
 
-// Get the modal
-var modal = document.getElementById('myModal');
 
-// Get the image and insert it inside the modal - use its "alt" text as a caption
-var img = document.getElementById('myImg');
-var modalImg = document.getElementById("img01");
-var captionText = document.getElementById("caption");
-img.onclick = function(){
-    modal.style.display = "block";
-    modalImg.src = this.src;
-    captionText.innerHTML = this.alt;
+var thumbnails = document.getElementsByClassName('thumbnail');
+var user_id = document.getElementById('user_id');
+
+for(var i=0; i<thumbnails.length; i++) {
+
+	img = thumbnails[i].getElementsByTagName('img')[0];
+	modal = thumbnails[i].getElementsByClassName('modal')[0];
+	modalImg = modal.getElementsByClassName('modal-content')[0];
+	modalImg_resize = modal.getElementsByClassName('modal-content')[1];
+	modalImg_enhancement = modal.getElementsByClassName('modal-content')[2];
+	modalImg_rotate = modal.getElementsByClassName('modal-content')[3];
+
+	captionText = modal.getElementsByClassName("caption")[0];
+	img.onclick = function(){
+	    modal.style.display = "block";
+	 	modalImg.src = this.src;
+	 	modalImg_resize.src =  "static/img/upload/"+ user_id.value +"/resize/" + this.alt;
+	    modalImg_enhancement.src = "static/img/upload/"+ user_id.value +"/enhancement/" + this.alt;
+	    modalImg_rotate.src = "static/img/upload/"+ user_id.value +"/rotate/" + this.alt;
+	    captionText.innerHTML = this.alt;
+	}
+
+	// Get the <span> element that closes the modal
+	var span = modal.getElementsByClassName("close")[0];
+
+	// When the user clicks on <span> (x), close the modal
+	span.onclick = function() { 
+	  modal.style.display = "none";
+	}
+	
+	$(window).keydown(function(e) {
+	  switch (e.keyCode) {
+	    case 27:
+	      span.click();  // esc
+	  }
+	});
+
 }
-
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
-
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() { 
-  modal.style.display = "none";
-}
-
-$(window).keydown(function(e) {
-  switch (e.keyCode) {
-    case 27:
-      span.click();  // esc
-  }
-});

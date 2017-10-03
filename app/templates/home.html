@@ -33,7 +33,7 @@ The Image Gallery</h1>
     </label>
   </form>
   <br>
-
+  <input id="user_id" type="text" value="{{user_id}}" name="user_id" hidden>
   {% for image in images %}
     <div class="col-lg-4 col-sm-6">
         <div class="thumbnail">
@@ -50,18 +50,15 @@ The Image Gallery</h1>
               <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
 
               <!-- Modal Content (The Image) -->
-              <img class="modal-content" id="img01">
+              <img class="modal-content" id="img_origin">
               <!-- Modal Caption (Image Text) -->
-              <div id="caption"></div>
+              <div class="caption"></div>
 
-              <img class="modal-content" src="static/img/upload/{{user_id}}/resize/{{image}}">
-              <div id="caption"></div>
+              <img class="modal-content" id="img_resize">
 
-              <img class="modal-content" src="static/img/upload/{{user_id}}/enhancement/{{image}}">
-              <div id="caption"></div>
+              <img class="modal-content" id="img_enhancement">
 
-              <img class="modal-content" src="static/img/upload/{{user_id}}/rotate/{{image}}">
-              <div id="caption"></div>
+              <img class="modal-content" id="img_rotate">
               
             </div>
             <!-- ********************************************************** -->
