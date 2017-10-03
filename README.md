@@ -1,5 +1,6 @@
 # shiny-eureka
 Cloud Computing Assignment 1
+
 A simple picture blog website
 
 # Get Started
