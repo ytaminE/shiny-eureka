@@ -1,7 +1,7 @@
 # Shiny Eureka
 Shiny Eureka is a web app created as Cloud Computing Assignment 1
 
-Simply to say, it is a picture blog web app.
+Simply to say, it is a picture blog website.
 
 # Get Started
 
