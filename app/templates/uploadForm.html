@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="container">
+  <h1>Upload Form (used for test)</h1>
+  <br>
+  <form id="uploadForm" action="/test/FileUpload"  enctype="multipart/form-data" method="post">
+    <label>UserID: <input type="text" placeholder="UserID" name="userID" value="{{request.form.username }}" required></label>
+    <label>Password: <input type="password" placeholder="Password" name="password" value="{{request.form.password }}" required></label>
+    <br>
+    
+    <br>
+    <input id="uploadedfile" type="file" name="uploadedfile">
+    <br>
+    
+    <label class="btn btn-success">
+      Send<input type="submit" style="display: none">      
+    </label>
+
+    <label class="btn btn-warning">
+      Reset<input type="reset" style="display: none">      
+    </label>
+
+  </form>
+  {% if error %}
+  <p class="error"><strong>Error:</strong> {{ error }}
+  {% endif %}
+</div>
+<script type="text/javascript" src="static/js/upload_test.js"></script>
+{% endblock %}

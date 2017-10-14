@@ -5,11 +5,11 @@
   <h1>Please Register</h1>
   <br>
   <form action="/register_submit" method="post">
-    <input type="text" placeholder="Username" name="username" value="{{
+    Username: <input type="text" placeholder="Username" name="username" value="{{
     request.form.username }}">
-    <input type="password" placeholder="Password" name="password" value="{{
+    Password: <input type="password" placeholder="Password" name="password" value="{{
     request.form.password }}">
-    <input type="email" placeholder="Email" name="email" value="{{request.form.email}}">
+    Email: <input type="email" placeholder="Email" name="email" value="{{request.form.email}}">
     <input class="btn btn-default" type="submit" value="Sign up">
   </form>
   {% if error %}

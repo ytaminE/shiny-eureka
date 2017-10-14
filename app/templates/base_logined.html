@@ -3,8 +3,9 @@
 <head>
 	{% block head %}
     <link rel="stylesheet" type="text/css" href="../static/css/lib/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/base.css">
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/base.css">
+
     <script
   src="http://code.jquery.com/jquery-3.2.1.js"
   integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
@@ -22,8 +23,8 @@
             <a href="/welcome" class="navbar-brand">Photo World</a>
         </div>
         <ul class="nav navbar-nav">
-            <li><a href="#">About</a></li>
-            <li><a href="#">Contact</a></li>
+            <li style="display: none;"><a href="#">About</a></li>
+            <li style="display: none"><a href="#">Contact</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li><a href="/home">Home</a></li>

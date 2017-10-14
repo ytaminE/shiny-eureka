@@ -5,15 +5,15 @@
   <div class="jumbotron">
     <h1><i class="fa fa-camera-retro" aria-hidden="true"></i>
 The Image Gallery</h1>
-    <p>A bunch of beautiful images that I didn't take</p>
+    <p>A bunch of beautiful images</p>
   </div>
-  <form action="/upload"  enctype="multipart/form-data" method="post">
+  
+  <form id="uploadForm" action="/upload"  enctype="multipart/form-data" method="post">
     <div id="input-group">
       <label id="upload-button" class="btn btn-primary">
-        Upload<input type="file" name="uploadedfile" style="display: none">      
+        Upload<input id="fileinput" type="file" accept=".png,.jpg,.jpeg,.gif" name="uploadedfile" style="display: none">      
       </label>
-      <br>
-      <br>
+          <p>Note: Currently only support jpg, png, jpeg and gif file with maximum file size: 10 MB and longest length of the file name: 45 characters</p>
       <input type="text" class="form-control" readonly="">
     </div>
     
@@ -26,6 +26,7 @@ The Image Gallery</h1>
       Reset<input type="reset" style="display: none">      
     </label>
   </form>
+
   <br>
   <form action="/empty" method="post">
     <label class="btn btn-danger">
@@ -41,7 +42,7 @@ The Image Gallery</h1>
             <!-- src="static/img/upload/{{user_id}}/{{image}}"> -->
             <!-- ********************************************************** -->
             <!-- Trigger the Modal -->
-            <img style="cursor:-webkit-zoom-in" id="myImg" src="static/img/upload/{{user_id}}/{{image}}" alt="{{image}}" width="300" height="200">
+            <img style="cursor:-webkit-zoom-in" id="myImg" src="static/img/upload/{{user_id}}/resize/{{image}}" alt="{{image}}" width="300" height="200">
 
             <!-- The Modal -->
             <div id="myModal" class="modal">
@@ -49,16 +50,17 @@ The Image Gallery</h1>
               <!-- The Close Button -->
               <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
 
-              <!-- Modal Content (The Image) -->
               <img class="modal-content" id="img_origin">
-              <!-- Modal Caption (Image Text) -->
-              <div class="caption"></div>
+              <div class="caption" id="caption"></div>
 
               <img class="modal-content" id="img_resize">
+              <div class="caption" id="caption"></div>
 
               <img class="modal-content" id="img_enhancement">
+              <div class="caption" id="caption"></div>
 
               <img class="modal-content" id="img_rotate">
+              <div class="caption" id="caption"></div>
               
             </div>
             <!-- ********************************************************** -->
@@ -66,5 +68,8 @@ The Image Gallery</h1>
     </div>
   {% endfor %}
 </div>
+  <br>
+  <br>
+  <br>
 <script type="text/javascript" src="static/js/upload.js"></script>
 {% endblock %}
