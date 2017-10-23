@@ -27,6 +27,7 @@ $(document).ready( function() {
 
 var thumbnails = document.getElementsByClassName('thumbnail');
 var user_id = document.getElementById('user_id');
+var bucket_url = document.getElementById('bucket_url');
 
 for(var i=0; i<thumbnails.length; i++) {
 
@@ -44,10 +45,16 @@ for(var i=0; i<thumbnails.length; i++) {
 
 	img.onclick = function(){
 	    modal.style.display = "block";
-	 	modalImg.src = "static/img/upload/"+ user_id.value + "/" + this.alt;
-	 	modalImg_resize.src =  "static/img/upload/"+ user_id.value +"/resize/" + this.alt;
-	    modalImg_enhancement.src = "static/img/upload/"+ user_id.value +"/enhancement/" + this.alt;
-	    modalImg_rotate.src = "static/img/upload/"+ user_id.value +"/rotate/" + this.alt;
+	 	modalImg.src = bucket_url.value + "/original/" + this.alt;
+	 	modalImg_resize.src =  bucket_url.value + "/resize/" + this.alt;
+	    modalImg_enhancement.src = bucket_url.value + "/enhancement/" + this.alt;
+	    modalImg_rotate.src = bucket_url.value + "/rotate/" + this.alt;
+	    
+
+	 	// modalImg_resize.src =  "static/img/upload/"+ user_id.value +"/resize/" + this.alt;
+	  //   modalImg_enhancement.src = "static/img/upload/"+ user_id.value +"/enhancement/" + this.alt;
+	  //   modalImg_rotate.src = "static/img/upload/"+ user_id.value +"/rotate/" + this.alt;
+	    
 	    captionText1.innerHTML = "Original Picture";
 	   	captionText2.innerHTML = "Resized Picture";
 	    captionText3.innerHTML = "Rightshift Picture";

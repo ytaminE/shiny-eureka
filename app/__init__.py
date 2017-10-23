@@ -4,7 +4,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
-from instance.development import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 
 app = Flask(__name__, instance_relative_config=True)
 
@@ -27,13 +26,13 @@ db = SQLAlchemy(app)
 # AWS_ACCESS_KEY_ID = 'AKIAJ7SCE2KPKMDN2L2Q'
 # AWS_SECRET_ACCESS_KEY = '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'
 
-s3 = boto3.client(
-    's3',
-    aws_access_key_id=AWS_ACCESS_KEY_ID,
-    aws_secret_access_key=AWS_SECRET_ACCESS_KEY
-)
+# s3 = boto3.client(
+#     's3',
+#     aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
+#     aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY']
+# )
 
-# s3 = boto3.resource('s3')
+s3 = boto3.resource('s3')
 # for bucket in s3.buckets.all():
 #     print(bucket.name)
 

@@ -35,6 +35,8 @@ The Image Gallery</h1>
   </form>
   <br>
   <input id="user_id" type="text" value="{{user_id}}" name="user_id" hidden>
+  <input id="bucket_url" type="text" value="https://s3.amazonaws.com/{{bucket_name}}/{{user_id}}" name="bucket_url" hidden>
+
   {% for image in images %}
     <div class="col-lg-4 col-sm-6">
         <div class="thumbnail">
@@ -42,13 +44,15 @@ The Image Gallery</h1>
             <!-- src="static/img/upload/{{user_id}}/{{image}}"> -->
             <!-- ********************************************************** -->
             <!-- Trigger the Modal -->
-            <img style="cursor:-webkit-zoom-in" id="myImg" src="static/img/upload/{{user_id}}/resize/{{image}}" alt="{{image}}" width="300" height="200">
+<!--             <img style="cursor:-webkit-zoom-in" id="myImg" src="static/img/upload/{{user_id}}/resize/{{image}}" alt="{{image}}" width="300" height="200"> -->
 
+            <img style="cursor:-webkit-zoom-in" id="myImg" src="https://s3.amazonaws.com/{{bucket_name}}/{{user_id}}/resize/{{image}}" alt="{{image}}" width="300" height="200">
+            
             <!-- The Modal -->
             <div id="myModal" class="modal">
 
               <!-- The Close Button -->
-              <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+              <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>  
 
               <img class="modal-content" id="img_origin">
               <div class="caption" id="caption"></div>

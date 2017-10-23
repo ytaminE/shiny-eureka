@@ -2,7 +2,7 @@ import os
 import glob
 import shutil
 
-from flask import render_template, redirect, url_for, request, flash
+from flask import render_template, redirect, url_for, request
 from flask_login import login_required, login_user, logout_user, current_user
 from werkzeug.utils import secure_filename
 from wand.image import Image
@@ -29,15 +29,15 @@ def welcome():
 @login_required
 def home():
     user_id = current_user.get_id()
-    img_path = app.config['UPLOAD_FOLDER'] + '/' + user_id + '/'
 
-    all_image_list = [glob.glob(img_path + '*.%s' % ext) for ext in ALLOWED_EXTENSIONS]
+    # img_path = app.config['UPLOAD_FOLDER'] + '/' + user_id + '/'
+    # all_image_list = [glob.glob(img_path + '*.%s' % ext) for ext in ALLOWED_EXTENSIONS]
+    # images = [item for image_list in all_image_list for item in image_list]
+    # images = [os.path.basename(x) for x in images]
 
-    images = [item for image_list in all_image_list for item in image_list]
-
-    images = [os.path.basename(x) for x in images]
-
-    return render_template('home.html', images=images, user_id=user_id)
+    bucket = s3.Bucket(app.config['IMAGE_BUCKET_NAME'])
+    images = [obj.key.split('/')[-1] for obj in bucket.objects.filter(Prefix=user_id + '/original/')]
+    return render_template('home.html', bucket_name = app.config['IMAGE_BUCKET_NAME'], images=images, user_id=user_id)
 
 
 # Route for empty images action
@@ -45,8 +45,10 @@ def home():
 @login_required
 def empty():
     if current_user.is_authenticated and request.method == 'POST':
+
         user_id = current_user.get_id()
         username = current_user.getUserName()
+
         upload_path = app.config['UPLOAD_FOLDER'] + '/' + user_id
         images = Photo.query.filter_by(userID=username)
         for image in images:
@@ -55,6 +57,11 @@ def empty():
         # Delete all the pictures under the upload_path
         if os.path.exists(upload_path):
             shutil.rmtree(upload_path)
+
+        # Delete images in S3
+        bucket = s3.Bucket(app.config['IMAGE_BUCKET_NAME'])
+        for obj in bucket.objects.filter(Prefix = user_id + '/'):
+            s3.Object(bucket.name, obj.key).delete()
 
     return redirect('home')
 
@@ -169,6 +176,11 @@ def processAndStoreImage(file, username, user_id):
     # The filename returned is an ASCII only string for maximum portability.
     filename = secure_filename(file.filename)
     save_path = app.config['UPLOAD_FOLDER'] + '/' + user_id + '/'
+    s3_save_path = user_id + '/'
+
+    s3_t1_path = s3_save_path + 'resize/'
+    s3_t2_path = s3_save_path + 'rotate/'
+    s3_t3_path = s3_save_path + 'enhancement/'
 
     t1_path = save_path + 'resize/'
     t2_path = save_path + 'rotate/'
@@ -182,29 +194,43 @@ def processAndStoreImage(file, username, user_id):
         os.makedirs(t2_path)
     if not os.path.exists(t3_path):
         os.makedirs(t3_path)
-
     # Save the original image into the server
     file.save(os.path.join(save_path, filename))
+    # s3.upload_fileobj(file, app.config['IMAGE_BUCKET_NAME'], s3_save_path+file.filename)
+    s3.Object(app.config['IMAGE_BUCKET_NAME'], s3_save_path + 'original/'+ filename).put(Body = open(save_path+filename, 'rb'))
     with Image(filename=save_path + filename) as img:
         # First transformation
         with img.clone() as i:
             i.resize(int(i.width * 0.7), int(i.height * 0.7))
             i.save(filename=t1_path + filename)
+            # s3.upload_fileobj(FileStorage(open(t1_path+filename,'rb')), app.config['IMAGE_BUCKET_NAME'], s3_t1_path + filename)
+            # s3.Bucket(app.config['IMAGE_BUCKET_NAME']).put_object(s3_t1_path + filename,FileStorage(open(t1_path+filename,'rb')))
+            s3.Object(app.config['IMAGE_BUCKET_NAME'], s3_t1_path + filename).put(Body= open(t1_path+filename,'rb'))
+
         # Second transformation
         with img.clone() as i:
             i.rotate(90)
             i.save(filename=t2_path + filename)
+            # s3.upload_fileobj(FileStorage(open(t1_path+filename,'rb')), app.config['IMAGE_BUCKET_NAME'], s3_t2_path + filename)
+            # s3.Bucket(app.config['IMAGE_BUCKET_NAME']).put_object(s3_t2_path + filename,
+            #                                                       FileStorage(open(t2_path + filename, 'rb')))
+            s3.Object(app.config['IMAGE_BUCKET_NAME'], s3_t2_path + filename).put(Body=open(t2_path+filename,'rb'))
+
         # Third transformation
         with img.clone() as i:
             i.evaluate(operator='rightshift', value=1, channel='red')
             i.save(filename=t3_path + filename)
+            # s3.upload_fileobj(FileStorage(open(t1_path+filename,'rb')), app.config['IMAGE_BUCKET_NAME'], s3_t3_path + filename)
+            # s3.Bucket(app.config['IMAGE_BUCKET_NAME']).put_object(s3_t3_path + filename,
+            #                                                       FileStorage(open(t3_path + filename, 'rb')))
+            s3.Object(app.config['IMAGE_BUCKET_NAME'], s3_t3_path + filename).put(Body=open(t3_path+filename,'rb'))
 
     # Store the path information into the database
     image = Photo(filename, username, save_path, t1_path, t2_path, t3_path)
     db.session.add(image)
     db.session.commit()
 
-    s3.upload_fileobj(file,'ece1779-yuanyi',file.filename)
+    #TODO: Delete the images stored in the server
 
 
 # A helper function used to add restriction on file type
