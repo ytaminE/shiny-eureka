@@ -7,7 +7,7 @@ from flask_login import login_required, login_user, logout_user, current_user
 from werkzeug.utils import secure_filename
 from wand.image import Image
 
-from . import app, db, login_manager
+from . import app, db, login_manager, s3
 from .models import User, Photo
 
 # Restriction on image types
@@ -53,7 +53,8 @@ def empty():
             db.session.delete(image)
         db.session.commit()
         # Delete all the pictures under the upload_path
-        shutil.rmtree(upload_path)
+        if os.path.exists(upload_path):
+            shutil.rmtree(upload_path)
 
     return redirect('home')
 
@@ -202,6 +203,8 @@ def processAndStoreImage(file, username, user_id):
     image = Photo(filename, username, save_path, t1_path, t2_path, t3_path)
     db.session.add(image)
     db.session.commit()
+
+    s3.upload_fileobj(file,'ece1779-yuanyi',file.filename)
 
 
 # A helper function used to add restriction on file type
