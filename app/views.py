@@ -202,7 +202,7 @@ def processAndStoreImage(file, username, user_id):
             s3.Object(app.config['IMAGE_BUCKET_NAME'], s3_t3_path + filename).put(Body=i.make_blob())
 
     # Store the path information into the database
-    image = Photo(filename, username, s3_save_path, s3_t1_path, s3_t2_path, s3_t3_path)
+    image = Photo(filename, username, s3_save_path + 'original/', s3_t1_path, s3_t2_path, s3_t3_path)
     db.session.add(image)
     db.session.commit()
 
