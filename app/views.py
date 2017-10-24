@@ -1,9 +1,5 @@
-import os
-import shutil
-
 from flask import render_template, redirect, url_for, request
 from flask_login import login_required, login_user, logout_user, current_user
-from werkzeug.datastructures import FileStorage
 from werkzeug.utils import secure_filename
 from wand.image import Image
 
@@ -49,7 +45,6 @@ def empty():
         user_id = current_user.get_id()
         username = current_user.getUserName()
 
-        upload_path = app.config['UPLOAD_FOLDER'] + '/' + user_id
         images = Photo.query.filter_by(userID=username)
 
         # Delete image information in the database
