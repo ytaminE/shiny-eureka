@@ -22,17 +22,15 @@ app.config['UPLOAD_FOLDER'] = 'app/static/img/upload'
 # MySQL Database
 db = SQLAlchemy(app)
 
-# AWS S3
-# AWS_ACCESS_KEY_ID = 'AKIAJ7SCE2KPKMDN2L2Q'
-# AWS_SECRET_ACCESS_KEY = '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'
-
 # s3 = boto3.client(
 #     's3',
 #     aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
 #     aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY']
 # )
 
-s3 = boto3.resource('s3')
+s3 = boto3.resource('s3',
+                    aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
+                    aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY'])
 # for bucket in s3.buckets.all():
 #     print(bucket.name)
 
