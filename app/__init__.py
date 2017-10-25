@@ -27,7 +27,10 @@ s3 = boto3.resource('s3',
                     aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
                     aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY'])
 
-elb = boto3.client('elbv2')
+elb = boto3.client('elbv2',
+                   aws_access_key_id = app.config['AWS_ACCESS_KEY_ID'],
+                   aws_secret_access_key = app.config['AWS_SECRET_ACCESS_KEY'],
+                   region_name = 'us-east-1')
 
 instanceid = urllib.request.urlopen('http://169.254.169.254/latest/meta-data/instance-id').read().decode()
 
