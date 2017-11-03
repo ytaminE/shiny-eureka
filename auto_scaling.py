@@ -12,7 +12,7 @@ def ec2_create(script):
     print("Start creating a new EC2 instance.")
     ec2 = boto3.resource('ec2')
     instance = ec2.create_instances(
-        ImageId='ami-2d298c57',
+        ImageId='ami-fb16bd81',
         InstanceType='t2.micro',
         KeyName='yuanyi',
         MinCount=1,
